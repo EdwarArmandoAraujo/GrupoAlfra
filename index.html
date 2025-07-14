@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestros Parques Solares - Grupo Alfra</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+    <link rel="stylesheet" href="estilos.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&family=Roboto:wght@300;400&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <section class="initial-screen" id="initial-screen"> 
+        <header class="main-header"> 
+            <div class="header-content">
+                <img src="Imagenes/logo2.jpg" alt="Logo de Grupo Alfra" class="header-logo">
+                <h1 class="header-title">Nuestros Parques Solares</h1>
+                <p class="header-subtitle">Descubre cómo estamos transformando el sistema energético de la República Dominicana.</p>
+                <a href="#" class="btn-explore" id="explore-map-btn">Explorar el Mapa</a>
+            </div>
+        </header>
+
+        <section class="bottom-section initial-screen-bottom">
+            <div class="park-list-container">
+                <h3>Listado de Parques</h3>
+                <ul id="park-names-list">
+                    </ul>
+            </div>
+            <div class="projection-container">
+                <div class="projection-content">
+                    <h3>Nos seguimos expandiendo</h3>
+                    <p id="projection-text">Proyección 2030:<br>⚡ <span id="total-capacity">0</span> MWp instalados en República Dominicana.</p>
+                    <div class="chart-container">
+                        <canvas id="capacity-pie-chart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <main class="main-container" id="map-screen"> 
+        <div class="map-header">
+            <img src="Imagenes/logo2.jpg" alt="Logo de Grupo Alfra" class="map-header-logo">
+            <h2 class="map-header-title">Parques Solares</h2>
+            <span class="map-header-subtitle">Grupo Alfra: Impulsando la energía renovable en RD.</span>
+        </div>
+
+        <div class="map-and-legend-wrapper">
+            <section id="legend-panel">
+                <h2>Estado de los Proyectos</h2>
+                <div id="legend" class="legend-cards">
+                    </div>
+                <button id="back-to-home-btn" class="btn-back-to-home">← Volver al Inicio</button> 
+            </section>
+            <section id="map-section" class="map-section">
+                <div id="map"></div> </section>
+        </div>
+    </main>
+
+    <aside id="info-panel" class="info-panel">
+        <button id="close-info-panel" class="close-btn">×</button>
+        <div id="info-content" class="info-content">
+            </div>
+    </aside>
+
+    <footer>
+        <p>© 2025 Grupo Alfra. Todos los derechos reservados.</p>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

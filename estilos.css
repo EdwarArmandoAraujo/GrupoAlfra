@@ -1,0 +1,712 @@
+/* Estilos Generales */
+body {
+    font-family: 'Poppins', sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    background-color: #f4f7f6;
+    color: #333;
+    overflow-x: hidden; /* Evita barras de desplazamiento horizontales durante la transición */
+    position: relative; /* Contenedor para las pantallas */
+}
+
+/* Contenedores de las dos "ventanas" */
+.initial-screen, .main-container {
+    width: 100%;
+    height: 100vh; /* Ocupa la altura completa del viewport */
+    position: absolute; /* Para que se superpongan y podamos animarlas */
+    top: 0;
+    left: 0;
+    transition: transform 0.7s ease-in-out, opacity 0.7s ease-in-out;
+    display: flex; /* Asegura que sus contenidos usen flexbox */
+    flex-direction: column; /* Apila el header y la sección inferior */
+    box-sizing: border-box; /* Para que padding y border se incluyan en el ancho/alto */
+    z-index: 10; /* Por defecto, la pantalla inicial está arriba */
+}
+
+/* Estado de la pantalla inicial */
+.initial-screen {
+    transform: translateX(0);
+    opacity: 1;
+    z-index: 11; /* La pantalla inicial por defecto está más arriba */
+}
+
+.initial-screen.hidden {
+    transform: translateX(-100%); /* Desliza hacia la izquierda al salir */
+    opacity: 0;
+    pointer-events: none; /* No interactuable cuando está oculta */
+    z-index: 9; /* Baja su z-index cuando está oculta */
+}
+
+/* Estado de la pantalla del mapa */
+.main-container {
+    transform: translateX(100%); /* Inicialmente fuera de la vista a la derecha */
+    opacity: 0;
+    z-index: 9; /* Por debajo de la pantalla inicial */
+}
+
+.main-container.visible {
+    transform: translateX(0); /* Desliza a la vista */
+    opacity: 1;
+    pointer-events: auto; /* Interactuable */
+    z-index: 11; /* Se eleva sobre la pantalla inicial al hacerse visible */
+}
+
+
+/* HEADER DE LA PANTALLA INICIAL */
+.main-header {
+    background: linear-gradient(135deg, #1f6b5b, #0e4d3f);
+    color: white;
+    text-align: center;
+    padding: 40px 20px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 30vh; /* MODIFICADO: Header un poco más pequeño */
+    position: relative;
+    overflow: hidden;
+}
+
+.header-content {
+    z-index: 1;
+    position: relative;
+}
+
+.header-logo {
+    width: 280px; /* MODIFICADO: Logo más grande para PC */
+    height: auto; /* Siempre mantiene la proporción */
+    display: block; /* Asegura que se comporte como un bloque */
+    margin: 0 auto 20px auto; /* Centra y añade margen inferior */
+    filter: drop-shadow(0 0 10px rgba(255,255,255,0.4));
+}
+
+.header-title {
+    font-size: 3.5rem;
+    margin-bottom: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    background: linear-gradient(to right, #f8d42d, #ff6b6b);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+}
+
+.header-subtitle {
+    font-size: 1.2rem;
+    margin-bottom: 30px;
+    color: rgba(255, 255, 255, 0.9);
+    font-weight: 300;
+}
+
+.btn-explore {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 15px 30px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
+
+.btn-explore:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+    box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+}
+
+.main-header::before,
+.main-header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: rgba(255,255,255,0.05);
+    border-radius: 50% 50% 0 0;
+    transform-origin: bottom center;
+    z-index: 0;
+}
+
+.main-header::before {
+    transform: scaleY(0.7) translateX(-5%);
+    opacity: 0.7;
+    animation: wave 10s ease-in-out infinite alternate;
+}
+
+.main-header::after {
+    transform: scaleY(0.9) translateX(5%);
+    opacity: 0.5;
+    animation: wave 12s ease-in-out infinite alternate-reverse;
+}
+
+@keyframes wave {
+    0% { transform: scaleY(0.7) translateX(-5%); }
+    100% { transform: scaleY(0.75) translateX(5%); }
+}
+
+
+/* CONTENEDOR PRINCIPAL DEL MAPA Y LEYENDA (La segunda ventana) */
+.main-container {
+    margin: 0; /* Asegura que no haya margen que afecte el posicionamiento absoluto */
+    padding: 20px; /* Mantener el padding interno */
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+    height: calc(100vh - 40px); /* Ajusta para el padding del body */
+    min-height: 600px;
+    background-color: white; /* Asegura un fondo blanco para que se vea durante la transición */
+}
+
+
+/* Nuevo Header para la vista del mapa */
+.map-header {
+    background: radial-gradient(circle at top left, #1F2937 0%, #0F172A 100%);
+    color: white;
+    padding: 15px 30px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.3);
+    flex-shrink: 0;
+    border-radius: 10px 10px 0 0;
+    position: relative;
+    overflow: hidden;
+}
+
+.map-header-logo {
+    width: 200px; /* MODIFICADO: Logo más grande para PC */
+    height: auto; /* Siempre mantiene la proporción */
+    filter: brightness(0.95) drop-shadow(0 0 8px rgba(255,255,255,0.3));
+}
+
+.map-header-title {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 700;
+    line-height: 1.2;
+    background: linear-gradient(to right, #FBBF24, #F97316);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    color: transparent;
+    text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+}
+
+.map-header-subtitle {
+    margin: 0;
+    font-family: 'Roboto', sans-serif;
+    font-size: 0.95rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.8);
+    flex-grow: 1;
+    text-align: right;
+    padding-left: 20px;
+}
+
+.map-header::after {
+    content: '';
+    position: absolute;
+    bottom: -30px;
+    left: 0;
+    width: 100%;
+    height: 100px;
+    background: linear-gradient(to right, rgba(255,255,255,0.05), rgba(255,255,255,0.01));
+    border-radius: 50% 50% 0 0;
+    transform: rotate(-3deg);
+    z-index: 0;
+    pointer-events: none;
+}
+
+
+/* Wrapper para mantener el mapa y la leyenda lado a lado */
+.map-and-legend-wrapper {
+    display: flex;
+    flex: 1;
+}
+
+
+/* Estilos del Mapa */
+#map {
+    flex: 3;
+    height: 100%;
+    z-index: 1;
+    border-radius: 0 0 0 10px;
+}
+
+.map-section {
+    flex: 3;
+    border-radius: 0 0 0 10px;
+    overflow: hidden;
+    position: relative;
+}
+
+
+/* Panel Izquierdo (Leyenda) */
+#legend-panel {
+    flex: 1;
+    padding: 20px;
+    background-color: #ffffff;
+    border-right: 1px solid #eee;
+    border-radius: 0 0 10px 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+#legend-panel h2 {
+    font-size: 1.8em;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+    text-align: center;
+}
+
+#legend {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-grow: 1;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    cursor: help;
+    box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+    background-color: #fdfdfd;
+}
+
+.legend-item:hover {
+    background-color: #f0f0f0;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.legend-color-box {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    margin-right: 10px;
+    flex-shrink: 0;
+}
+
+.legend-icon {
+    font-size: 1.2em;
+    margin-right: 8px;
+}
+
+.legend-text {
+    flex-grow: 1;
+    font-weight: 500;
+    color: #444;
+}
+
+.legend-count {
+    font-size: 0.9em;
+    color: #777;
+    font-weight: bold;
+    margin-left: 5px;
+    background-color: #e0e0e0;
+    padding: 2px 7px;
+    border-radius: 12px;
+}
+
+/* Estilos para el botón "Volver al Inicio" */
+.btn-back-to-home {
+    display: block; /* Asegura que sea visible */
+    margin-top: 20px;
+    padding: 10px 15px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1em;
+    transition: background-color 0.3s ease;
+}
+
+.btn-back-to-home:hover {
+    background-color: #5a6268;
+}
+
+/* Estilos del icono personalizado de Leaflet (para los marcadores) */
+.custom-div-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+}
+
+/* Panel de Información Detallada (Panel Derecho) */
+#info-panel {
+    position: fixed;
+    right: 0;
+    top: 0;
+    height: 100%;
+    width: 0;
+    background-color: #ffffff;
+    box-shadow: -4px 0 15px rgba(0,0,0,0.15);
+    overflow-y: auto;
+    transition: width 0.3s ease-in-out;
+    z-index: 1000;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+}
+
+#info-panel.open {
+    width: 380px;
+    padding: 20px;
+}
+
+#info-panel .close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    font-size: 1.8em;
+    cursor: pointer;
+    background: none;
+    border: none;
+    color: #555;
+    z-index: 1001;
+    transition: color 0.2s ease;
+}
+
+#info-panel .close-btn:hover {
+    color: #e74c3c;
+}
+
+#info-content {
+    padding-top: 40px;
+}
+
+#info-content h2 {
+    color: #2c3e50;
+    font-size: 2em;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.park-info-image {
+    max-width: 100%;
+    height: auto;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+#info-content p {
+    margin-bottom: 8px;
+    line-height: 1.6;
+    color: #555;
+}
+
+#info-content p strong {
+    color: #333;
+}
+
+.park-links-section {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px dashed #eee;
+}
+
+.park-links-section h3 {
+    color: #2c3e50;
+    font-size: 1.3em;
+    margin-bottom: 15px;
+}
+
+/* Se mantiene el estilo de botón existente, ya que google-maps-link-button también lo usará */
+.drive-link-button, .google-maps-link-button {
+    display: inline-block;
+    background-color: #007bff;
+    color: white;
+    padding: 10px 15px;
+    border-radius: 5px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+
+.drive-link-button:hover, .google-maps-link-button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px);
+}
+
+/* --- Estilos para la Sección Inferior (Ahora en la primera ventana) --- */
+.bottom-section {
+    display: flex; /* Usar flexbox */
+    flex-wrap: wrap; /* Permitir que los elementos se envuelvan en pantallas pequeñas */
+    margin: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    overflow: hidden;
+    min-height: 350px;
+    background-color: white;
+    flex-grow: 1; /* Para que ocupe el espacio restante */
+}
+
+/* Alineación específica para la sección inferior en la pantalla inicial */
+.initial-screen-bottom {
+    margin-top: 0;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+
+.park-list-container {
+    flex: 1;
+    min-width: 280px;
+    padding: 20px;
+    background-color: #f8f8f8;
+    border-right: 1px solid #eee;
+    overflow-y: auto;
+}
+
+.park-list-container h3 {
+    font-size: 1.5em;
+    color: #2c3e50;
+    margin-top: 0;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.park-list-container ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.park-list-container li {
+    padding: 8px 0;
+    border-bottom: 1px dashed #eee;
+    color: #555;
+    font-size: 0.95em;
+    transition: color 0.2s ease;
+}
+
+.park-list-container li:last-child {
+    border-bottom: none;
+}
+
+.park-list-container li:hover {
+    color: #007bff;
+    font-weight: 500;
+}
+
+
+.projection-container {
+    flex: 2;
+    min-width: 400px;
+    background-image: url('imagenes/solar-park-bg.jpg');
+    background-position: center center;
+    background-repeat: no-repeat;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    text-shadow: 0 0 8px rgba(0,0,0,0.8);
+    padding: 20px;
+    position: relative;
+}
+
+.projection-container::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1;
+}
+
+.projection-content {
+    text-align: center;
+    position: relative;
+    z-index: 2;
+    max-width: 600px;
+}
+
+.projection-content h3 {
+    font-size: 2.5em;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    white-space: nowrap;
+}
+
+.projection-content p {
+    font-size: 1.3em;
+    line-height: 1.5;
+    margin-bottom: 30px;
+    font-weight: 400;
+}
+
+.projection-content #total-capacity {
+    font-weight: 700;
+    color: #fdd835;
+}
+
+.chart-container {
+    width: 250px;
+    height: 250px;
+    margin: 20px auto 0;
+    background-color: rgba(255, 255, 255, 0.9);
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.3);
+}
+
+/* Media Queries para responsividad */
+
+/* --- Media Query para tablets (hasta 992px de ancho) --- */
+@media (max-width: 992px) {
+    /* Pantalla inicial */
+    .main-header {
+        min-height: 30vh; /* MODIFICADO: Header más pequeño en tablets también */
+        padding: 30px 15px;
+    }
+    /* Logo para tablets */
+    .header-logo {
+        width: 200px; /* MODIFICADO: Logo más grande para tablets */
+        margin-bottom: 15px; /* Ajuste de margen para pantallas más pequeñas */
+    }
+    .map-header-logo {
+        width: 120px; /* MODIFICADO: Logo del mapa más grande en tablets */
+    }
+
+    .header-title {
+        font-size: 2.5rem;
+    }
+    .header-subtitle {
+        font-size: 1rem;
+    }
+    .btn-explore {
+        padding: 12px 25px;
+        font-size: 1rem;
+    }
+
+    /* Contenedor del mapa (segunda ventana) */
+    .main-container {
+        flex-direction: column;
+        margin: 10px;
+        height: auto;
+        min-height: 500px;
+    }
+
+    .map-header {
+        border-radius: 10px 10px 0 0;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 10px 15px;
+    }
+
+    /* map-header-logo ya ajustado arriba */
+
+    .map-header-title {
+        font-size: 1.5rem;
+        flex-basis: 100%;
+        text-align: center;
+        margin-bottom: 5px;
+    }
+
+    .map-header-subtitle {
+        display: block;
+        flex-basis: 100%;
+        text-align: center;
+        font-size: 0.85rem;
+    }
+
+    /* En pantallas pequeñas, el mapa y la leyenda se apilan */
+    .map-and-legend-wrapper {
+        flex-direction: column;
+    }
+
+    .map-section {
+        border-radius: 0;
+        height: 300px;
+    }
+
+    #legend-panel {
+        border-right: none;
+        border-top: 1px solid #eee;
+        border-radius: 0 0 10px 10px;
+        order: 2;
+    }
+
+    #info-panel {
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        border-radius: 0;
+    }
+
+    #info-panel.open {
+        width: 100%;
+    }
+
+    /* Media queries para la nueva sección inferior (en la primera ventana) */
+    .bottom-section {
+        flex-direction: column;
+        margin: 10px;
+    }
+    .initial-screen-bottom {
+        margin-bottom: 20px;
+    }
+
+    .park-list-container,
+    .projection-container {
+        flex: 0 0 100%;
+        min-width: unset;
+        border-right: none;
+        border-bottom: 1px solid #eee;
+    }
+
+    .projection-container {
+        min-height: 300px;
+        border-radius: 0 0 10px 10px;
+    }
+    .park-list-container {
+        border-radius: 0;
+    }
+}
+
+/* --- Media Query para móviles (hasta 768px de ancho) --- */
+@media (max-width: 768px) {
+    .header-logo {
+        width: 140px; /* MODIFICADO: Logo más grande para móviles */
+        margin-bottom: 10px; /* Ajuste de margen para pantallas aún más pequeñas */
+    }
+    .map-header-logo {
+        width: 90px; /* MODIFICADO: Logo del mapa más grande en móviles */
+    }
+}
